@@ -21,8 +21,15 @@ default: &default
 
 
 development:
-  <<: *default
-  database: scraper_development
+  primary: &primary_development
+    <<: *default
+    database: scraper_development
+
+  cache:
+    <<: *primary_development
+
+  queue:
+    <<: *primary_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -55,8 +62,15 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: scraper_test
+  primary: &primary_test
+    <<: *default
+    database: scraper_test
+
+  cache:
+    <<: *primary_test
+
+  queue:
+    <<: *primary_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -81,18 +95,10 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: scraper_production
-    username: scraper
-    password: <%= ENV["SCRAPER_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
+
   cache:
     <<: *primary_production
-    database: scraper_production_cache
-    migrations_paths: db/cache_migrate
+
   queue:
     <<: *primary_production
-    database: scraper_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: scraper_production_cable
-    migrations_paths: db/cable_migrate
